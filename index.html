@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Volta da Andréa</title>
+<meta name="description" content="Uma surpresa de boas-vindas para Andréa Perin.">
+<meta name="theme-color" content="#F4EBDD">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: uma quadra de vôlei vista de cima. O topo é a quadra (título + placar), a rede separa o mural de recados. */
+:root {
+  --bg: #F4EBDD;
+  --surface: #FFFBF4;
+  --fg: #14263D;
+  --muted: #566678;
+  --line: #D6C3A3;
+  --court-line: rgba(20, 38, 61, 0.16);
+  --accent: #C93E14;
+  --on-accent: #FFFFFF;
+  --focus: #1F5FBF;
+  --board: #0B1B30;
+  --board-line: #24405F;
+  --led: #FFC83D;
+  --led-dim: #C9B27A;
+  --net: rgba(20, 38, 61, 0.28);
+  --n1-bg: #FFE9A8; --n1-fg: #3B2E05;
+  --n2-bg: #CFE3FF; --n2-fg: #0F2A4D;
+  --n3-bg: #FFD3C2; --n3-fg: #4A1D0D;
+  --n4-bg: #D4F0DC; --n4-fg: #123824;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1B2E;
+    --surface: #12253B;
+    --fg: #EAF0F7;
+    --muted: #9FB1C5;
+    --line: #294765;
+    --court-line: rgba(255, 255, 255, 0.14);
+    --accent: #FF7A4D;
+    --on-accent: #0C1B2E;
+    --focus: #7DB2FF;
+    --board: #07121F;
+    --board-line: #24405F;
+    --net: rgba(255, 255, 255, 0.22);
+    --n1-bg: #4A3D0E; --n1-fg: #FFE9A8;
+    --n2-bg: #17365E; --n2-fg: #CFE3FF;
+    --n3-bg: #5A2A1C; --n3-fg: #FFD3C2;
+    --n4-bg: #1B4A2E; --n4-fg: #D4F0DC;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1B2E;
+  --surface: #12253B;
+  --fg: #EAF0F7;
+  --muted: #9FB1C5;
+  --line: #294765;
+  --court-line: rgba(255, 255, 255, 0.14);
+  --accent: #FF7A4D;
+  --on-accent: #0C1B2E;
+  --focus: #7DB2FF;
+  --board: #07121F;
+  --board-line: #24405F;
+  --net: rgba(255, 255, 255, 0.22);
+  --n1-bg: #4A3D0E; --n1-fg: #FFE9A8;
+  --n2-bg: #17365E; --n2-fg: #CFE3FF;
+  --n3-bg: #5A2A1C; --n3-fg: #FFD3C2;
+  --n4-bg: #1B4A2E; --n4-fg: #D4F0DC;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-block: 20px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Quadra */
+.court {
+  position: relative;
+  border: 3px solid var(--court-line);
+  padding: clamp(18px, 4vw, 40px);
+  display: grid;
+  gap: clamp(20px, 4vw, 36px);
+  overflow: hidden;
+}
+.court-lines { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--court-line); pointer-events: none; }
+.hero { position: relative; display: flex; align-items: center; gap: clamp(14px, 3vw, 32px); }
+.hero-text { min-width: 0; }
+.ball { flex: 0 0 auto; width: clamp(68px, 15vw, 140px); height: clamp(68px, 15vw, 140px); animation: spin 16s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.eyebrow {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(34px, 8vw, 76px);
+  line-height: 0.98;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.lead { margin: 12px 0 0; max-width: 52ch; color: var(--muted); font-size: clamp(15px, 2.4vw, 18px); }
+
+/* Placar */
+.board {
+  position: relative;
+  background: var(--board);
+  color: var(--led);
+  border: 1px solid var(--board-line);
+  box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.6);
+}
+.board-top {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--board-line);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--led-dim);
+}
+.cells { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cell { padding: clamp(12px, 3vw, 26px) 4px clamp(10px, 2.4vw, 18px); text-align: center; min-width: 0; }
+.cell + .cell { border-left: 1px solid var(--board-line); }
+.num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(46px, 13vw, 128px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px rgba(255, 200, 61, 0.35);
+}
+.lab {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 2.4vw, 16px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--led-dim);
+}
+.again {
+  display: none;
+  margin: 0;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--board-line);
+  text-align: center;
+}
+.is-done .again { display: block; }
+
+button, input, textarea { font: inherit; color: inherit; }
+.btn {
+  appearance: none;
+  border: 0;
+  background: var(--accent);
+  color: var(--on-accent);
+  padding: 11px 22px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; filter: none; }
+.btn-ghost { background: transparent; color: var(--led); border: 2px solid var(--led); padding: 8px 18px; font-size: 16px; }
+
+/* Rede */
+.net {
+  margin: clamp(28px, 6vw, 48px) 0 clamp(22px, 4vw, 32px);
+  height: 30px;
+  border-top: 5px solid var(--fg);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 13px, var(--net) 13px 14px),
+    repeating-linear-gradient(0deg, transparent 0 9px, var(--net) 9px 10px);
+}
+
+/* Mural */
+.mural-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.mural-head p { margin: 8px 0 0; color: var(--muted); max-width: 60ch; }
+.mural-grid { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: clamp(20px, 4vw, 40px); margin-top: 24px; align-items: start; }
+@media (max-width: 760px) { .mural-grid { grid-template-columns: minmax(0, 1fr); } }
+
+form { display: grid; gap: 16px; background: var(--surface); border: 2px solid var(--line); padding: 20px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+label, legend {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+input[type="text"], textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  padding: 10px 12px;
+  border-radius: 0;
+}
+textarea { min-height: 120px; resize: vertical; }
+.count { justify-self: end; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.swatch { position: relative; display: inline-block; }
+.swatch input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.swatch span { display: block; width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.18); }
+.swatch input:checked + span { border-color: var(--fg); }
+.swatch input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sw1 { background: var(--n1-bg); } .sw2 { background: var(--n2-bg); } .sw3 { background: var(--n3-bg); } .sw4 { background: var(--n4-bg); }
+.status { margin: 0; min-height: 1.5em; font-size: 14px; color: var(--muted); }
+.status.err { color: var(--accent); }
+.notice { margin: 0; padding: 12px 14px; border: 2px dashed var(--line); color: var(--muted); font-size: 15px; }
+
+.notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; min-width: 0; }
+.note {
+  margin: 0;
+  padding: 16px 16px 12px;
+  display: grid;
+  gap: 12px;
+  align-content: space-between;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 10px 18px -12px rgba(0, 0, 0, 0.45);
+  min-width: 0;
+}
+.note.c1 { background: var(--n1-bg); color: var(--n1-fg); }
+.note.c2 { background: var(--n2-bg); color: var(--n2-fg); }
+.note.c3 { background: var(--n3-bg); color: var(--n3-fg); }
+.note.c4 { background: var(--n4-bg); color: var(--n4-fg); }
+.note p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 17px; line-height: 1.45; }
+.note footer { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 13px; }
+.note .who { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; overflow-wrap: anywhere; }
+.note .when { opacity: 0.8; font-variant-numeric: tabular-nums; }
+.note .rm { appearance: none; border: 0; background: transparent; text-decoration: underline; cursor: pointer; font-size: 13px; padding: 2px 0; }
+.empty { grid-column: 1 / -1; margin: 0; padding: 28px 20px; border: 2px dashed var(--line); color: var(--muted); }
+
+.foot { margin-top: 40px; font-size: 13px; color: var(--muted); }
+
+/* Final: a bola passa por cima da rede e cai do outro lado */
+.finale {
+  position: fixed; inset: 0; z-index: 50;
+  background: radial-gradient(120% 90% at 50% 0%, #17365E 0%, #0B1B30 60%, #060F1C 100%);
+  color: #fff;
+  overflow-y: auto;
+  display: flex; align-items: center; justify-content: center;
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+.stage { position: relative; z-index: 1; width: 100%; max-width: 960px; display: grid; gap: clamp(22px, 5vh, 44px); justify-items: center; text-align: center; }
+.scene { --sh: clamp(200px, 34vh, 320px); --bs: clamp(46px, 9vw, 66px); position: relative; width: 100%; height: var(--sh); }
+.floor { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255, 255, 255, 0.4); }
+.fnet {
+  position: absolute; left: 50%; bottom: 0; width: 12px; height: 46%; transform: translateX(-50%);
+  border-top: 6px solid #fff;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 9px, rgba(255, 255, 255, 0.5) 9px 10px),
+    repeating-linear-gradient(90deg, transparent 0 5px, rgba(255, 255, 255, 0.35) 5px 6px);
+}
+.fnet::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 4px; height: calc(100% + 6px); background: rgba(255, 255, 255, 0.7); transform: translateX(-50%); }
+.flyx { position: absolute; bottom: 0; left: 6%; width: var(--bs); height: var(--bs); }
+.flyy { width: 100%; height: 100%; }
+.flyy svg { width: 100%; height: 100%; display: block; }
+.play .flyx { animation: bx 2.4s linear forwards; }
+.play .flyy { animation: by 2.4s forwards; }
+.play .flyy svg { animation: spin 0.9s linear infinite; }
+@keyframes bx { from { left: 6%; } to { left: calc(88% - var(--bs)); } }
+@keyframes by {
+  0% { transform: translateY(0); animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  45% { transform: translateY(calc(var(--sh) * -0.8)); animation-timing-function: cubic-bezier(0.7, 0, 0.8, 0.4); }
+  100% { transform: translateY(0); }
+}
+.burst { position: absolute; bottom: -10px; left: calc(88% - var(--bs) * 1.5); width: calc(var(--bs) * 2); height: calc(var(--bs) * 2); border: 4px solid var(--led, #FFC83D); border-radius: 50%; opacity: 0; transform: scale(0.2); }
+.play .burst { animation: boom 0.9s 2.4s ease-out forwards; }
+@keyframes boom { 0% { opacity: 1; transform: scale(0.2); } 100% { opacity: 0; transform: scale(2.2); } }
+
+.finale-text { margin: 0; font-family: var(--font-display); font-weight: 700; text-transform: uppercase; line-height: 1.02; font-size: clamp(30px, 6.4vw, 66px); text-wrap: balance; }
+.finale-text .line { display: block; }
+.finale-text .line + .line { margin-top: 0.25em; font-size: 0.72em; color: #D6E4F5; }
+.word { display: inline-block; opacity: 0; transform: translateY(0.6em) scale(0.96); }
+.play .word { animation: rise 0.5s calc(2.6s + var(--i) * 0.14s) cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards; }
+.name { color: #FFC83D; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.finale-actions { opacity: 0; }
+.play .finale-actions { animation: rise 0.5s 4.6s forwards; }
+.finale .btn { background: #FFC83D; color: #0B1B30; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ball, .play .flyy svg { animation: none; }
+  .play .flyx, .play .flyy, .play .burst { animation: none; }
+  .flyx { left: calc(88% - var(--bs)); }
+  .word, .finale-actions { opacity: 1; transform: none; animation: none !important; }
+  .note { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="ballclip"><circle cx="50" cy="50" r="48"/></clipPath>
+    <symbol id="ball" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="48" fill="#F2C230"/>
+      <g clip-path="url(#ballclip)" fill="none" stroke-linecap="round">
+        <path d="M-12 30 C 24 6, 70 16, 112 54" stroke="#1F5FBF" stroke-width="19"/>
+        <path d="M-12 80 C 30 52, 68 72, 112 98" stroke="#1F5FBF" stroke-width="19"/>
+        <path d="M34 -12 C 18 28, 44 62, 38 112" stroke="#1F5FBF" stroke-width="15"/>
+        <path d="M-12 30 C 24 6, 70 16, 112 54" stroke="#0E2A47" stroke-width="1.4" transform="translate(0 -10)"/>
+        <path d="M-12 30 C 24 6, 70 16, 112 54" stroke="#0E2A47" stroke-width="1.4" transform="translate(0 10)"/>
+        <path d="M34 -12 C 18 28, 44 62, 38 112" stroke="#0E2A47" stroke-width="1.4" transform="translate(-9 0)"/>
+        <path d="M34 -12 C 18 28, 44 62, 38 112" stroke="#0E2A47" stroke-width="1.4" transform="translate(9 0)"/>
+      </g>
+      <circle cx="50" cy="50" r="48" fill="none" stroke="#0E2A47" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="wrap">
+  <section class="court" aria-labelledby="titulo">
+    <svg class="court-lines" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="3" vector-effect="non-scaling-stroke">
+        <line x1="400" y1="0" x2="400" y2="400" vector-effect="non-scaling-stroke"/>
+        <line x1="267" y1="0" x2="267" y2="400" vector-effect="non-scaling-stroke"/>
+        <line x1="533" y1="0" x2="533" y2="400" vector-effect="non-scaling-stroke"/>
+      </g>
+    </svg>
+
+    <div class="hero">
+      <svg class="ball" aria-hidden="true" focusable="false"><use href="#ball"/></svg>
+      <div class="hero-text">
+        <p class="eyebrow">Retorno ao trabalho</p>
+        <h1 id="titulo">Andréa Perin está voltando</h1>
+        <p class="lead" id="lead">Contagem para o saque inicial: quarta-feira, 18 de novembro de 2026, às 8h. Enquanto isso, deixe um recado de boas-vindas no mural.</p>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="board-top"><span>Placar</span><span>Saque às 08h00 · 18/11</span></div>
+      <div class="cells" aria-hidden="true">
+        <div class="cell"><span class="num" id="v-d">--</span><span class="lab">dias</span></div>
+        <div class="cell"><span class="num" id="v-h">--</span><span class="lab">horas</span></div>
+        <div class="cell"><span class="num" id="v-m">--</span><span class="lab">min</span></div>
+        <div class="cell"><span class="num" id="v-s">--</span><span class="lab">seg</span></div>
+      </div>
+      <p class="sr" id="resumo" aria-live="polite"></p>
+      <p class="again"><button class="btn btn-ghost" id="rever" type="button">Rever a surpresa</button></p>
+    </div>
+  </section>
+
+  <div class="net" role="presentation"></div>
+
+  <section aria-labelledby="mural-titulo">
+    <div class="mural-head">
+      <h2 id="mural-titulo">Mural de recados</h2>
+      <p>Escreva uma mensagem para a Andréa. Os recados aparecem para todo mundo, na hora.</p>
+    </div>
+
+    <div class="mural-grid">
+      <form id="form" autocomplete="off">
+        <div class="field">
+          <label for="nome">Seu nome</label>
+          <input type="text" id="nome" maxlength="40" placeholder="Como você quer assinar">
+        </div>
+        <div class="field">
+          <label for="msg">Recado</label>
+          <textarea id="msg" maxlength="280" placeholder="Bem-vinda de volta, Andréa!" required></textarea>
+          <span class="count" id="count">0/280</span>
+        </div>
+        <fieldset>
+          <legend>Cor do recado</legend>
+          <div class="swatches">
+            <label class="swatch"><input type="radio" name="cor" value="1" checked><span class="sw1"></span><span class="sr">Amarelo</span></label>
+            <label class="swatch"><input type="radio" name="cor" value="2"><span class="sw2"></span><span class="sr">Azul</span></label>
+            <label class="swatch"><input type="radio" name="cor" value="3"><span class="sw3"></span><span class="sr">Laranja</span></label>
+            <label class="swatch"><input type="radio" name="cor" value="4"><span class="sw4"></span><span class="sr">Verde</span></label>
+          </div>
+        </fieldset>
+        <button class="btn" id="enviar" type="submit">Mandar o recado</button>
+        <p class="status" id="status" role="status"></p>
+      </form>
+
+      <div style="min-width:0">
+        <p class="notice" id="aviso" hidden></p>
+        <div class="notes" id="notes" aria-live="polite">
+          <p class="empty" id="carregando">Carregando os recados...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Para rever a surpresa de volta ao trabalho antes da hora, abra o endereço deste site terminando em #final.</p>
+</main>
+
+<div class="finale" id="finale" role="dialog" aria-modal="true" aria-labelledby="finale-text" hidden>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <div class="stage">
+    <div class="scene" id="scene" aria-hidden="true">
+      <div class="floor"></div>
+      <div class="fnet"></div>
+      <div class="flyx" id="flyx"><div class="flyy"><svg focusable="false"><use href="#ball"/></svg></div></div>
+      <div class="burst"></div>
+    </div>
+    <p class="finale-text" id="finale-text"></p>
+    <div class="finale-actions"><button class="btn" id="finale-close" type="button">Ir para o mural</button></div>
+  </div>
+</div>
+
+<script type="module">
+(() => {
+  "use strict";
+
+  /*
+   * CONFIGURAÇÃO DO SUPABASE
+   * 1. Crie um projeto em https://supabase.com
+   * 2. Em Project Settings > API, copie Project URL e anon/public key.
+   * 3. Cole os valores abaixo. A chave anon/public pode ficar no frontend
+   *    quando as políticas RLS do banco estiverem corretamente configuradas.
+   *    NUNCA coloque a service_role key neste arquivo.
+   */
+  const SUPABASE_URL = "https://uarbzegccjbdkryvypvw.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_SbhoI4QeYt-L53rtaenrPQ_Y5_BuybJ";
+
+  const TARGET = new Date("2026-11-18T08:00:00-03:00").getTime();
+  const $ = (id) => document.getElementById(id);
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+
+  // Tema automático: acompanha a preferência de aparência do dispositivo.
+  // O CSS já contém os dois conjuntos de variáveis de cores.
+  const colorScheme = window.matchMedia?.("(prefers-color-scheme: dark)");
+  function applyAutomaticTheme() {
+    document.documentElement.dataset.theme = colorScheme?.matches ? "dark" : "light";
+  }
+  applyAutomaticTheme();
+  colorScheme?.addEventListener?.("change", applyAutomaticTheme);
+
+  // Contagem regressiva
+  const els = { d: $("v-d"), h: $("v-h"), m: $("v-m"), s: $("v-s") };
+  const shown = {};
+  function put(key, value) {
+    if (shown[key] !== value) {
+      shown[key] = value;
+      els[key].textContent = value;
+    }
+  }
+  let countdownTimer = null;
+  let finished = false;
+  let lastMinute = -1;
+
+  function tick() {
+    const diff = TARGET - Date.now();
+    if (diff <= 0) {
+      finishCountdown();
+      return;
+    }
+    const total = Math.floor(diff / 1000);
+    const days = Math.floor(total / 86400);
+    const hours = Math.floor((total % 86400) / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const seconds = total % 60;
+    put("d", String(days).padStart(2, "0"));
+    put("h", String(hours).padStart(2, "0"));
+    put("m", String(minutes).padStart(2, "0"));
+    put("s", String(seconds).padStart(2, "0"));
+
+    const minuteKey = Math.floor(total / 60);
+    if (minuteKey !== lastMinute) {
+      lastMinute = minuteKey;
+      $("resumo").textContent = `Faltam ${days} ${days === 1 ? "dia" : "dias"}, ${hours} ${hours === 1 ? "hora" : "horas"} e ${minutes} ${minutes === 1 ? "minuto" : "minutos"} para a volta da Andréa.`;
+    }
+  }
+
+  // Animação de comemoração e confetes
+  const finale = $("finale");
+  const closeButton = $("finale-close");
+  const canvas = $("confetti");
+  const ctx = canvas.getContext("2d");
+  let particles = [];
+  let animationFrame = 0;
+  let burstTimer = 0;
+  let rainTimer = 0;
+  let previousFocus = null;
+  const COLORS = ["#FFC83D", "#1F5FBF", "#FF7A4D", "#FFFFFF", "#58C48A"];
+  const LINES = ["De volta ao trabalho Andréa,", "as prestações de contas sentiram sua falta"];
+
+  function buildFinaleText() {
+    const host = $("finale-text");
+    let index = 0;
+    LINES.forEach((line) => {
+      const lineElement = document.createElement("span");
+      lineElement.className = "line";
+      line.split(" ").forEach((word) => {
+        const span = document.createElement("span");
+        span.className = "word" + (word.startsWith("Andréa") ? " name" : "");
+        span.style.setProperty("--i", index++);
+        span.textContent = word;
+        lineElement.append(span, document.createTextNode(" "));
+      });
+      host.appendChild(lineElement);
+    });
+  }
+
+  function resizeCanvas() {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(window.innerWidth * dpr);
+    canvas.height = Math.round(window.innerHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function spawn(x, y, amount, upward) {
+    for (let i = 0; i < amount; i++) {
+      particles.push({
+        x, y,
+        vx: (Math.random() - 0.5) * (upward ? 16 : 6),
+        vy: upward ? -(6 + Math.random() * 13) : Math.random() * 3,
+        w: 6 + Math.random() * 7,
+        h: 4 + Math.random() * 5,
+        r: Math.random() * Math.PI * 2,
+        vr: (Math.random() - 0.5) * 0.4,
+        c: COLORS[i % COLORS.length]
+      });
+    }
+    if (!animationFrame) animationFrame = requestAnimationFrame(drawConfetti);
+  }
+
+  function drawConfetti() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.vy += 0.26;
+      p.vx *= 0.992;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.r += p.vr;
+      if (p.y > window.innerHeight + 30) {
+        particles.splice(i, 1);
+        continue;
+      }
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    animationFrame = particles.length ? requestAnimationFrame(drawConfetti) : 0;
+  }
+
+  function celebrate() {
+    if (reduceMotion || finale.hidden) return;
+    resizeCanvas();
+    const ball = $("flyx").getBoundingClientRect();
+    spawn(ball.left + ball.width / 2, ball.top + ball.height / 2, 150, true);
+    rainTimer = window.setTimeout(() => {
+      spawn(window.innerWidth * 0.2, -10, 70, false);
+      spawn(window.innerWidth * 0.8, -10, 70, false);
+    }, 700);
+  }
+
+  function openFinale() {
+    previousFocus = document.activeElement;
+    finale.hidden = false;
+    document.body.style.overflow = "hidden";
+    finale.classList.remove("play");
+    void finale.offsetWidth;
+    finale.classList.add("play");
+    closeButton.focus({ preventScroll: true });
+    clearTimeout(burstTimer);
+    clearTimeout(rainTimer);
+    burstTimer = window.setTimeout(celebrate, 2400);
+  }
+
+  function closeFinale() {
+    finale.hidden = true;
+    finale.classList.remove("play");
+    document.body.style.overflow = "";
+    clearTimeout(burstTimer);
+    clearTimeout(rainTimer);
+    cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
+    particles = [];
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    previousFocus?.focus?.({ preventScroll: true });
+  }
+
+  function finishCountdown() {
+    if (finished) return;
+    finished = true;
+    clearInterval(countdownTimer);
+    put("d", "00"); put("h", "00"); put("m", "00"); put("s", "00");
+    document.body.classList.add("is-done");
+    $("titulo").textContent = "Andréa Perin voltou ao jogo";
+    $("lead").textContent = "O saque inicial já foi dado: hoje é dia de volta ao trabalho. Deixe seu recado de boas-vindas no mural.";
+    $("resumo").textContent = "A contagem terminou. Andréa voltou ao trabalho.";
+    openFinale();
+  }
+
+  buildFinaleText();
+  closeButton.addEventListener("click", closeFinale);
+  $("rever").addEventListener("click", openFinale);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !finale.hidden) closeFinale();
+  });
+  window.addEventListener("hashchange", () => {
+    if (location.hash === "#final" && finale.hidden) openFinale();
+  });
+  window.addEventListener("resize", () => {
+    if (!finale.hidden) resizeCanvas();
+  });
+
+  tick();
+  if (!finished) countdownTimer = window.setInterval(tick, 500);
+  if (!finished && location.hash === "#final") openFinale();
+
+  // Mural de recados com Supabase
+  const MAX_MESSAGE_LENGTH = 280;
+  const form = $("form");
+  const messageInput = $("msg");
+  const nameInput = $("nome");
+  const submitButton = $("enviar");
+  const statusElement = $("status");
+  const notesContainer = $("notes");
+  const notice = $("aviso");
+  const count = $("count");
+  let supabase = null;
+  let channel = null;
+  let isAdmin = false;
+  let isSending = false;
+  let notes = [];
+  let statusTimeout = 0;
+
+  messageInput.addEventListener("input", () => {
+    count.textContent = `${messageInput.value.length}/${MAX_MESSAGE_LENGTH}`;
+  });
+
+  function setStatus(message, isError = false) {
+    statusElement.textContent = message;
+    statusElement.className = "status" + (isError ? " err" : "");
+    clearTimeout(statusTimeout);
+    if (message && !isError) {
+      statusTimeout = window.setTimeout(() => { statusElement.textContent = ""; }, 5000);
+    }
+  }
+
+  function showNotice(message) {
+    notice.textContent = message;
+    notice.hidden = false;
+  }
+
+  function setFormEnabled(enabled) {
+    messageInput.disabled = !enabled;
+    nameInput.disabled = !enabled;
+    submitButton.disabled = !enabled;
+    form.querySelectorAll('input[name="cor"]').forEach((radio) => { radio.disabled = !enabled; });
+  }
+
+  function stableHash(value) {
+    let hash = 0;
+    for (let i = 0; i < value.length; i++) hash = (hash * 31 + value.charCodeAt(i)) | 0;
+    return hash;
+  }
+
+  function renderNotes() {
+    notesContainer.replaceChildren();
+    if (!notes.length) {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "Ainda não há recados. Abra o jogo com o primeiro.";
+      notesContainer.appendChild(empty);
+      return;
+    }
+
+    notes.forEach((note) => {
+      const color = Math.min(4, Math.max(1, Number.parseInt(note.cor, 10) || 1));
+      const article = document.createElement("article");
+      article.className = `note c${color}`;
+      article.style.setProperty("--tilt", ((((stableHash(String(note.id)) % 5) + 5) % 5) - 2) * 0.35 + "deg");
+
+      const paragraph = document.createElement("p");
+      paragraph.textContent = String(note.texto || "").slice(0, MAX_MESSAGE_LENGTH);
+
+      const footer = document.createElement("footer");
+      const author = document.createElement("span");
+      author.className = "who";
+      author.textContent = String(note.nome || "Alguém do time").slice(0, 40);
+
+      const date = document.createElement("span");
+      date.className = "when";
+      const createdAt = note.criado_em ? new Date(note.criado_em) : null;
+      date.textContent = createdAt && !Number.isNaN(createdAt.getTime())
+        ? createdAt.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
+        : "";
+
+      footer.append(author, date);
+      if (isAdmin) {
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "rm";
+        removeButton.textContent = "remover";
+        removeButton.setAttribute("aria-label", `Remover o recado de ${author.textContent}`);
+        removeButton.addEventListener("click", async () => {
+          removeButton.disabled = true;
+          const { error } = await supabase.from("recados").delete().eq("id", note.id);
+          if (error) {
+            removeButton.disabled = false;
+            setStatus("Não foi possível remover. Confira se sua conta é administradora.", true);
+          }
+        });
+        footer.appendChild(removeButton);
+      }
+      article.append(paragraph, footer);
+      notesContainer.appendChild(article);
+    });
+  }
+
+  async function loadNotes() {
+    const { data, error } = await supabase
+      .from("recados")
+      .select("id,nome,texto,cor,criado_em")
+      .order("criado_em", { ascending: false })
+      .limit(200);
+
+    if (error) {
+      showNotice("Não foi possível carregar os recados. Confira a configuração do Supabase e as políticas de acesso (RLS).");
+      notesContainer.replaceChildren();
+      return;
+    }
+    notes = data || [];
+    renderNotes();
+  }
+
+  async function setupAdmin() {
+    const { data: { session } } = await supabase.auth.getSession();
+    isAdmin = !!session;
+    if (isAdmin) {
+      const { data, error } = await supabase.from("administradores").select("user_id").eq("user_id", session.user.id).maybeSingle();
+      isAdmin = !error && !!data;
+    }
+    renderNotes();
+    updateAdminControls();
+  }
+
+  function updateAdminControls() {
+    let panel = $("admin-panel");
+    if (!panel) {
+      panel = document.createElement("details");
+      panel.id = "admin-panel";
+      panel.style.cssText = "margin-top:18px;padding:12px;border:1px solid var(--line);background:var(--surface)";
+      const summary = document.createElement("summary");
+      summary.textContent = "Acesso administrativo";
+      summary.style.cursor = "pointer";
+      const fields = document.createElement("div");
+      fields.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;margin-top:12px";
+      fields.innerHTML = '<input id="admin-email" type="email" autocomplete="username" placeholder="E-mail administrador" style="min-width:180px;flex:1;padding:9px;border:1px solid var(--line);background:var(--bg);color:var(--fg)"><input id="admin-password" type="password" autocomplete="current-password" placeholder="Senha" style="min-width:140px;flex:1;padding:9px;border:1px solid var(--line);background:var(--bg);color:var(--fg)"><button id="admin-login" class="btn" type="button">Entrar</button><button id="admin-logout" class="btn btn-ghost" type="button" hidden>Sair</button>';
+      panel.append(summary, fields);
+      $("mural-titulo").parentElement.appendChild(panel);
+      $("admin-login").addEventListener("click", async () => {
+        const email = $("admin-email").value.trim();
+        const password = $("admin-password").value;
+        if (!email || !password) { setStatus("Informe e-mail e senha do administrador.", true); return; }
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) { setStatus("Não foi possível entrar. Confira e-mail e senha.", true); return; }
+        await setupAdmin();
+        setStatus(isAdmin ? "Acesso administrativo ativado." : "Esta conta não está cadastrada como administradora.", !isAdmin);
+      });
+      $("admin-logout").addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        isAdmin = false;
+        renderNotes();
+        updateAdminControls();
+        setStatus("Você saiu do acesso administrativo.");
+      });
+    }
+    $("admin-login").hidden = isAdmin;
+    $("admin-email").hidden = isAdmin;
+    $("admin-password").hidden = isAdmin;
+    $("admin-logout").hidden = !isAdmin;
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (isSending || !supabase) return;
+    const texto = messageInput.value.trim();
+    if (!texto) {
+      setStatus("Escreva uma mensagem antes de enviar.", true);
+      messageInput.focus();
+      return;
+    }
+    const selectedColor = form.querySelector('input[name="cor"]:checked');
+    isSending = true;
+    submitButton.disabled = true;
+    setStatus("Enviando...");
+    const { error } = await supabase.from("recados").insert({
+      nome: nameInput.value.trim().slice(0, 40) || "Alguém do time",
+      texto: texto.slice(0, MAX_MESSAGE_LENGTH),
+      cor: selectedColor ? Number.parseInt(selectedColor.value, 10) : 1
+    });
+
+    if (error) {
+      console.error("Erro ao enviar recado:", error);
+      setStatus("Não foi possível enviar agora. Confira a conexão e as políticas do Supabase.", true);
+    } else {
+      messageInput.value = "";
+      count.textContent = `0/${MAX_MESSAGE_LENGTH}`;
+      setStatus("Recado enviado. Ele já aparece no mural.");
+      await loadNotes();
+    }
+    isSending = false;
+    submitButton.disabled = false;
+  });
+
+  async function initializeMural() {
+    if (
+      !SUPABASE_URL.startsWith("https://") ||
+      SUPABASE_URL.includes("COLE_AQUI") ||
+      !SUPABASE_ANON_KEY ||
+      SUPABASE_ANON_KEY.includes("COLE_AQUI")
+    ) {
+      setFormEnabled(false);
+      showNotice("O mural está pronto, mas falta conectar o Supabase. Siga o README do projeto e preencha a URL e a chave anon/public no início do JavaScript.");
+      notesContainer.replaceChildren();
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "Configure o Supabase para carregar e publicar recados.";
+      notesContainer.appendChild(empty);
+      return;
+    }
+
+    try {
+      const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      setFormEnabled(true);
+      await Promise.all([loadNotes(), setupAdmin()]);
+
+      channel = supabase
+        .channel("recados-em-tempo-real")
+        .on("postgres_changes", { event: "*", schema: "public", table: "recados" }, loadNotes)
+        .subscribe();
+
+      supabase.auth.onAuthStateChange(() => {
+        window.setTimeout(setupAdmin, 0);
+      });
+    } catch (error) {
+      console.error("Falha ao iniciar Supabase:", error);
+      setFormEnabled(false);
+      showNotice("Não foi possível iniciar o Supabase. Verifique a URL, a chave pública e sua conexão.");
+    }
+  }
+
+  initializeMural();
+
+  window.addEventListener("beforeunload", () => {
+    if (channel && supabase) supabase.removeChannel(channel);
+  });
+})();
+</script>
+
+</body>
+</html>
